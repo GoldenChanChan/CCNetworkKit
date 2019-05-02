@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '8.0'
+
+target 'CCNetworkKit_Example' do
+  pod 'CCNetworkKit', :path => '../'
+
+  target 'CCNetworkKit_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
