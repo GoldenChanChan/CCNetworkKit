@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CCNetworkKit'
-  s.version          = '0.1.0'
+  s.version          = '0.0.1'
   s.summary          = 'A short description of CCNetworkKit.'
 
 # This description is used to generate tags and improve search results.
@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/chencheng2046@126.com/CCNetworkKit'
+  s.homepage         = 'https://github.com/GoldenChanChan/CCNetworkKit.git'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'chencheng2046@126.com' => 'chencheng2046@126.com' }
-  s.source           = { :git => 'https://github.com/chencheng2046@126.com/CCNetworkKit.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/GoldenChanChan/CCNetworkKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
@@ -38,5 +38,7 @@ TODO: Add long description of the pod here.
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+   s.dependency 'AFNetworking'
+   s.dependency 'JSONModel'
+   s.dependency 'MBProgressHUD'
 end

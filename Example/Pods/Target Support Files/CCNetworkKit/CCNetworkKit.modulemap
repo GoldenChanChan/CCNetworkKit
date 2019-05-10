@@ -1,0 +1,6 @@
+framework module CCNetworkKit {
+  umbrella header "CCNetworkKit-umbrella.h"
+
+  export *
+  module * { export * }
+}

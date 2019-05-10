@@ -1,0 +1,33 @@
+{
+  "name": "CCNetworkKit",
+  "version": "0.1.0",
+  "summary": "A short description of CCNetworkKit.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/chencheng2046@126.com/CCNetworkKit",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "chencheng2046@126.com": "chencheng2046@126.com"
+  },
+  "source": {
+    "git": "https://github.com/chencheng2046@126.com/CCNetworkKit.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "CCNetworkKit/Classes/**/*",
+  "dependencies": {
+    "AFNetworking": [
+
+    ],
+    "JSONModel": [
+
+    ],
+    "MBProgressHUD": [
+
+    ]
+  }
+}
