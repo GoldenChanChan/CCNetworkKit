@@ -7,11 +7,16 @@
 //
 
 #import "CCAppDelegate.h"
+#import <CCNetworkKit/CCNetworkKitManager.h>
 
 @implementation CCAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //设置network框架参数
+    //注册指定json数据结构的解析名称
+    //以下注册用例可用于解析此格式的json数据：{code:1,msg:"未知错误",data:[]或{},currenttime:"时间字符串"}
+    [CCNetworkKitManager registerCodeName:@"code" errMsgName:@"msg" serverTimeName:@"currenttime" dataName:@"data" baseUrl:@"https://www.test.com/"];
     // Override point for customization after application launch.
     return YES;
 }
