@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		350A926A22896038007D7512 /* CCTestApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 350A926922896038007D7512 /* CCTestApi.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -39,6 +40,8 @@
 /* Begin PBXFileReference section */
 		0E8894B904B2562E0A4E2912 /* CCNetworkKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CCNetworkKit.podspec; path = ../CCNetworkKit.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		29FDB7B9F5D0CAC15D0A2243 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		350A926822896038007D7512 /* CCTestApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCTestApi.h; sourceTree = "<group>"; };
+		350A926922896038007D7512 /* CCTestApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCTestApi.m; sourceTree = "<group>"; };
 		4BF3B9C872844036274D967C /* Pods-CCNetworkKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CCNetworkKit_Tests.debug.xcconfig"; path = "Target Support Files/Pods-CCNetworkKit_Tests/Pods-CCNetworkKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		56C21760E6BA46FFF679AD1E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* CCNetworkKit_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CCNetworkKit_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -145,6 +148,8 @@
 			children = (
 				6003F59C195388D20070C39A /* CCAppDelegate.h */,
 				6003F59D195388D20070C39A /* CCAppDelegate.m */,
+				350A926822896038007D7512 /* CCTestApi.h */,
+				350A926922896038007D7512 /* CCTestApi.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* CCViewController.h */,
 				6003F5A6195388D20070C39A /* CCViewController.m */,
@@ -375,6 +380,7 @@
 			files = (
 				6003F59E195388D20070C39A /* CCAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* CCViewController.m in Sources */,
+				350A926A22896038007D7512 /* CCTestApi.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

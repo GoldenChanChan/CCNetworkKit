@@ -153,7 +153,11 @@
 //设置url
 -(CCBaseApiBasicBlockType)l_URLFull {
     return ^(NSString *l_URLFull){
-        self.URLFull = [NSString stringWithFormat:@"%@%@",CCNetworkKitManager.shareManager.baseUrl,l_URLFull];
+        if ([l_URLFull hasPrefix:@"http"]) {
+            self.URLFull = l_URLFull;
+        } else {
+            self.URLFull = [NSString stringWithFormat:@"%@%@",CCNetworkKitManager.shareManager.baseUrl,l_URLFull];
+        }
         return self;
     };
 }
@@ -225,6 +229,9 @@
 //                [FXDataListModel replaceDataPropertyTypeWithClass:self.rowsModelClass];
 //            }
             model = [[CCResponseModel alloc] initWithDictionary:self.httpResponseObject error:&error];
+            if (model&&model.code.length==0) {
+                model = nil;
+            }
         }
 #ifdef DEBUG
         if (error) NSLog(@"CCBaseCCResponseModel转换失败:  %@", error.description);
@@ -243,14 +250,10 @@
  */
 - (void)handleResponse:(id)response {
     _httpResponseObject = response;
+    id originalResponse = response;
     //映射根json结构
     if ([response isKindOfClass:[NSDictionary class]]) {
         NSMutableDictionary *newResponse = [NSMutableDictionary new];
-        //设置状态码字段数据
-        NSString *codeName = CCNetworkKitManager.shareManager.codeName;
-        if (codeName&&[response objectForKey:codeName]) {
-            [newResponse setObject:[response objectForKey:codeName] forKey:codeName];
-        }
         //设置错误信息字段数据
         NSString *msgName = CCNetworkKitManager.shareManager.errMsgName;
         if (msgName&&[response objectForKey:msgName]) {
@@ -266,7 +269,11 @@
         if (dataName&&[response objectForKey:dataName]) {
             [newResponse setObject:[response objectForKey:dataName] forKey:dataName];
         }
-        if (newResponse.allKeys.count) {
+        //设置状态码字段数据
+        NSString *codeName = CCNetworkKitManager.shareManager.codeName;
+        if (codeName&&[response objectForKey:codeName]) {
+            [newResponse setObject:[response objectForKey:codeName] forKey:codeName];
+            //code码有值时才进行源数据重置操作
             _httpResponseObject = newResponse;
         }
     }
@@ -277,35 +284,48 @@
     NSError *error = nil;
     CCResponseModel *resModel = [self makeApiResultModel];
     if ([resModel isKindOfClass:CCResponseModel.class]) {
-        bool isSuccessResult = self.successCodeArray.count?[resModel isSuccessResultWithCodes:self.successCodeArray]:resModel.isSuccessResult;
-        if (isSuccessResult) {
-            [self handleSuccess];
-            return;
-        } else {
-            error = [NSError responseResultError:resModel];
-            if (error.code==CCNetworkKitManager.shareManager.APIErrorCode_LoginOverdue) {
-                //登录超时
-                if (CCNetworkKitManager.shareManager.ErrLoginOverdueBlock) {
-                    CCNetworkKitManager.shareManager.ErrLoginOverdueBlock();
-                }
-            } else if (error.code==CCNetworkKitManager.shareManager.APIErrorCode_LoginNeeded) {
-                //未登录
-                if (CCNetworkKitManager.shareManager.ErrLoginNeededBlock) {
-                    CCNetworkKitManager.shareManager.ErrLoginNeededBlock();
-                }
-            } else if (error.code==CCNetworkKitManager.shareManager.APIErrorCode_LoginCrowd) {
-                //账号被挤或在其他地方登录了
-                if (CCNetworkKitManager.shareManager.ErrLoginCrowdBlock) {
-                    CCNetworkKitManager.shareManager.ErrLoginCrowdBlock();
+        //转化成果，且含有code值时，走正常判断逻辑
+        if (resModel.code.length) {
+            BOOL isSuccessResult = self.successCodeArray.count?[resModel isSuccessResultWithCodes:self.successCodeArray]:resModel.isSuccessResult;
+            if (isSuccessResult) {
+                [self handleSuccess];
+                return;
+            } else {
+                error = [NSError responseResultError:resModel];
+                if (error.code==CCNetworkKitManager.shareManager.APIErrorCode_LoginOverdue) {
+                    //登录超时
+                    if (CCNetworkKitManager.shareManager.ErrLoginOverdueBlock) {
+                        CCNetworkKitManager.shareManager.ErrLoginOverdueBlock();
+                    }
+                } else if (error.code==CCNetworkKitManager.shareManager.APIErrorCode_LoginNeeded) {
+                    //未登录
+                    if (CCNetworkKitManager.shareManager.ErrLoginNeededBlock) {
+                        CCNetworkKitManager.shareManager.ErrLoginNeededBlock();
+                    }
+                } else if (error.code==CCNetworkKitManager.shareManager.APIErrorCode_LoginCrowd) {
+                    //账号被挤或在其他地方登录了
+                    if (CCNetworkKitManager.shareManager.ErrLoginCrowdBlock) {
+                        CCNetworkKitManager.shareManager.ErrLoginCrowdBlock();
+                    }
                 }
             }
-        }
-    } else {
-        if (!self.resModelClass) {
-            [self handleSuccess];//这里可以返回原始字典结果
+        } else {//不含code值时,默认是请求成功的,且返回原始数据
+            _httpResponseObject = originalResponse;
+            [self handleSuccess];
             return;
         }
-        error = [NSError responseDataFormatError:resModel];
+        
+    } else {
+//        if (!self.resModelClass) {
+//            [self handleSuccess];//这里可以返回原始字典结果
+//            return;
+//        }
+        if (resModel) {
+            [self handleSuccess];//这里可以返回原始字典结果
+            return;
+        } else {
+            error = [NSError responseDataFormatError:resModel];
+        }
     }
     if (error) {
         [self handleError:error];
@@ -316,7 +336,7 @@
     _isRequesting = NO;
     
     id resultModel = self.httpResultModel;
-    if (!self.resModelClass) {
+    if (self.resModelClass==nil) {
         //如果将返回数据的class设为nil，返回原始字典数据
         resultModel = self.httpResponseObject;
     } else {
@@ -325,7 +345,9 @@
             resultModel = self.httpResultDataModel;
         }
     }
-    
+    if (resultModel==nil) {
+        resultModel = self.httpResponseObject;
+    }
     if (self.interceptorBlock) {
         NSError *error = self.interceptorBlock(resultModel);
         if (error) {
@@ -420,10 +442,10 @@
     } else {
         _httpTask = [[CCNetworkKitManager getAFManager] POST:self.URLFull parameters:postParams progress:progress success:success failure:failure];
     }
-    [self autoCancelTask];
+    [self setAutoCancelTaskWhenDelegateDealloc];
 }
-
-- (void)autoCancelTask {
+//设置delegate销毁时自动取消请求的回调
+- (void)setAutoCancelTaskWhenDelegateDealloc {
     //调用http请求的发起者对象销毁后，取消未完成的http请求
     if (self.delegate && [self.delegate isKindOfClass:[NSObject class]]) {
         NSObject *object = self.delegate;

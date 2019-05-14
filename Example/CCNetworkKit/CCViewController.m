@@ -7,6 +7,8 @@
 //
 
 #import "CCViewController.h"
+#import "CCTestApi.h"
+//#import <CCNetworkKit/UIView+CCNetToast.h>
 
 @interface CCViewController ()
 
@@ -17,9 +19,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    [self getTestRequest];
 }
-
+- (void)getTestRequest {
+    [CCTestApi getWeatherDataWithVersion:@"v1" cityId:@"101110101"].l_loadOnView(self.view).apiCall(^(id result,NSError* err){
+        NSLog(@"%@",result);
+    });
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
