@@ -257,22 +257,22 @@
         //设置错误信息字段数据
         NSString *msgName = CCNetworkKitManager.shareManager.errMsgName;
         if (msgName&&[response objectForKey:msgName]) {
-            [newResponse setObject:[response objectForKey:msgName] forKey:msgName];
+            [newResponse setObject:[response objectForKey:msgName] forKey:@"msg"];
         }
         //设置服务器时间字段数据
         NSString *serverTimeName = CCNetworkKitManager.shareManager.serverTimeName;
         if (serverTimeName&&[response objectForKey:serverTimeName]) {
-            [newResponse setObject:[response objectForKey:serverTimeName] forKey:serverTimeName];
+            [newResponse setObject:[response objectForKey:serverTimeName] forKey:@"currentTime"];
         }
         //设置接口数据源字段数据
         NSString *dataName = CCNetworkKitManager.shareManager.dataName;
         if (dataName&&[response objectForKey:dataName]) {
-            [newResponse setObject:[response objectForKey:dataName] forKey:dataName];
+            [newResponse setObject:[response objectForKey:dataName] forKey:@"data"];
         }
         //设置状态码字段数据
         NSString *codeName = CCNetworkKitManager.shareManager.codeName;
         if (codeName&&[response objectForKey:codeName]) {
-            [newResponse setObject:[response objectForKey:codeName] forKey:codeName];
+            [newResponse setObject:[response objectForKey:codeName] forKey:@"code"];
             //code码有值时才进行源数据重置操作
             _httpResponseObject = newResponse;
         }
