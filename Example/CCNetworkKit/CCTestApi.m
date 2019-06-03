@@ -17,6 +17,6 @@
     if (cityId) {
         [dic setObject:cityId forKey:@"cityid"];
     }
-    return  self.apiInitURLFull(@"https://www.tianqiapi.com/api/").l_params(dic).l_resArrayModelClass(NSArray.class);
+    return  self.apiInitURLFull(@"https://www.tianqiapi.com/api/").l_params(dic).l_isGet(@(NO)).l_resArrayModelClass(NSArray.class);
 }
 @end

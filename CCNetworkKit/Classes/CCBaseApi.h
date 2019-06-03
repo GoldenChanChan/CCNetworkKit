@@ -1,6 +1,6 @@
 //
 //  CCBaseApi.h
-//  KDLogistics
+//  wtf
 //
 //  Created by cc on 2017/12/14.
 //  Copyright © 2017年 cc. All rights reserved.
@@ -39,6 +39,8 @@ typedef CCBaseApi *(^CCBaseApiClassParamBlockType)(Class);
 - (CCBaseApiBasicBlockType) l_loadOnView;
 //保存调用接口的对象，用于在销毁时做一下清除操作
 - (CCBaseApiBasicBlockType) l_delegate;
+//设置是否为get请求(不调用时，默认为post请求方式)
+- (CCBaseApiBasicBlockType)l_isGet;
 //FXDataListModel中的rows对应的model
 //- (CCBaseApiClassParamBlockType) l_dataListRowsModelClass;
 //接口返回成功数据处理拦截器block
@@ -65,7 +67,7 @@ typedef CCBaseApi *(^CCBaseApiClassParamBlockType)(Class);
 /**
  重新调用该接口的请求，不需要调用
  */
-- (void)POST;
+//- (void)startRequest;
 
 //失败处理，不需要调用
 - (void)handleError:(NSError *)error;

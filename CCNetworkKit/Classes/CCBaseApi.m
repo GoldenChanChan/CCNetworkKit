@@ -1,9 +1,9 @@
 //
 //  CCBaseApi.m
-//  KDLogistics
+//  wtf
 //
-//  Created by fengunion on 2017/12/14.
-//  Copyright © 2017年 fengunion. All rights reserved.
+//  Created by cc on 2017/12/14.
+//  Copyright © 2017年 cc. All rights reserved.
 //
 
 #import "CCBaseApi.h"
@@ -28,6 +28,7 @@
 @property (nonatomic,copy) NSString *successCode;
 @property (nonatomic,strong) NSArray *successCodeArray;
 @property (nonatomic,assign) id delegate;
+@property (nonatomic,assign) BOOL isGet;//是否是get请求
 @property (nonatomic,strong) NSURLSessionDataTask *httpTask;
 @property (nonatomic,assign) BOOL isResArray;//返回的data数据是否为数组
 @property (nonatomic,assign) BOOL isRequesting;//是否正在请求中
@@ -62,6 +63,18 @@
 -(CCBaseApiBasicBlockType)l_delegate {
     return ^(id l_delegate){
         self.delegate = l_delegate;
+        return self;
+    };
+}
+    
+-(CCBaseApiBasicBlockType)l_isGet {
+    return ^(id l_isGet){
+        if (l_isGet) {
+            self.isGet = [l_isGet boolValue];
+        } else {
+            self.isGet = NO;
+        }
+        
         return self;
     };
 }
@@ -184,7 +197,7 @@
 -(void(^)(FinishBlock))apiCall {
     return ^(FinishBlock l_finishBlock){
         self.finishBlock = l_finishBlock;
-        [self preparePost];
+        [self prepareRequest];
 //        return self;
     };
 }
@@ -192,7 +205,7 @@
 -(void(^)(SuccessBlock))apiCallSuccess {
     return ^(SuccessBlock l_successBlock){
         self.successBlock = l_successBlock;
-        [self preparePost];
+        [self prepareRequest];
 //        return self;
     };
 }
@@ -205,9 +218,9 @@
 //    };
 //}
 
-- (void)preparePost {
+- (void)prepareRequest {
     [self propertyReset];
-    [self POST];
+    [self startRequest];
 }
 
 - (void)propertyReset {
@@ -405,9 +418,9 @@
 //    [manager.requestSerializer setValue:token forHTTPHeaderField:@"token"];
 }
 
-- (void)POST {
+- (void)startRequest {
 #ifdef DEBUG
-    NSLog(@"POST调用接口 %@",self.URLFull);
+    NSLog(@"%@调用接口 %@",self.isGet?@"GET":@"POST",self.URLFull);
 #endif
     if (![self isHttpCanRequest]) return;
     
@@ -420,9 +433,9 @@
     if (!self.params) {
         self.params = [NSMutableDictionary dictionary];
     }
-    NSMutableDictionary *postParams = [self.params mutableCopy];
+    NSMutableDictionary *params = [self.params mutableCopy];
 #ifdef DEBUG
-    NSLog(@"Request header: %@\n path: %@\n params: %@",[CCNetworkKitManager getAFManager].requestSerializer.HTTPRequestHeaders , self.URLFull, postParams);
+    NSLog(@"Request header: %@\n path: %@\n params: %@",[CCNetworkKitManager getAFManager].requestSerializer.HTTPRequestHeaders , self.URLFull, params);
 #endif
     //上传进度回调
     void (^progress)(NSProgress * _Nonnull)  = ^(NSProgress *uploadProgress) {
@@ -436,12 +449,16 @@
     void (^failure)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull)  = ^(NSURLSessionDataTask *task, NSError *error) {
         [self handleError:error];
     };
-    
-    if (self.multipartBlock) {
-        _httpTask = [[CCNetworkKitManager getAFManager] POST:self.URLFull parameters:postParams constructingBodyWithBlock:self.multipartBlock progress:progress success:success failure:failure];
+    if (self.isGet) {
+        _httpTask = [[CCNetworkKitManager getAFManager] GET:self.URLFull parameters:params progress:progress success:success failure:failure];
     } else {
-        _httpTask = [[CCNetworkKitManager getAFManager] POST:self.URLFull parameters:postParams progress:progress success:success failure:failure];
+        if (self.multipartBlock) {
+            _httpTask = [[CCNetworkKitManager getAFManager] POST:self.URLFull parameters:params constructingBodyWithBlock:self.multipartBlock progress:progress success:success failure:failure];
+        } else {
+            _httpTask = [[CCNetworkKitManager getAFManager] POST:self.URLFull parameters:params progress:progress success:success failure:failure];
+        }
     }
+    
     [self setAutoCancelTaskWhenDelegateDealloc];
 }
 //设置delegate销毁时自动取消请求的回调
