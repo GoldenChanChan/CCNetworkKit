@@ -45,17 +45,20 @@
 }
 
 - (void)toastWithText:(NSString *)text hideAfterDelay:(NSTimeInterval)delay {
+    
     if (text.length>0) {
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
-        hud.contentColor = [UIColor whiteColor];
-        hud.bezelView.backgroundColor = [UIColor blackColor];
-        hud.bezelView.style = MBProgressHUDBackgroundStyleBlur;
-        hud.userInteractionEnabled = NO;
-        hud.mode = MBProgressHUDModeText;
-        hud.label.text = text;
-        hud.label.numberOfLines = 0;
-        [hud hideAnimated:YES afterDelay:delay];
-        hud.isHudDelayHide = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
+            hud.contentColor = [UIColor whiteColor];
+            hud.bezelView.backgroundColor = [UIColor blackColor];
+            hud.bezelView.style = MBProgressHUDBackgroundStyleBlur;
+            hud.userInteractionEnabled = NO;
+            hud.mode = MBProgressHUDModeText;
+            hud.label.text = text;
+            hud.label.numberOfLines = 0;
+            [hud hideAnimated:YES afterDelay:delay];
+            hud.isHudDelayHide = YES;
+        });
     }
 }
 
@@ -87,27 +90,33 @@
 }
 
 - (void)toastLoadingWithText:(NSString *)text {
-    self.isToastLoading = YES;
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
-    hud.contentColor = [UIColor whiteColor];
-    hud.bezelView.backgroundColor = [UIColor blackColor];
-    hud.bezelView.style = MBProgressHUDBackgroundStyleBlur;
-    if (text.length>0) {
-        hud.label.text = text;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.isToastLoading = YES;
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
+        hud.contentColor = [UIColor whiteColor];
+        hud.bezelView.backgroundColor = [UIColor blackColor];
+        hud.bezelView.style = MBProgressHUDBackgroundStyleBlur;
+        if (text.length>0) {
+            hud.label.text = text;
+        }
+    });
+    
 }
 
 - (void)toastHide {
     self.isToastLoading = NO;
-    //[MBProgressHUD hideHUDForView:self animated:YES];
-    for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:MBProgressHUD.class]) {
-            MBProgressHUD *hud = (MBProgressHUD *)subview;
-            if (!hud.isHudDelayHide) {
-                [hud hideAnimated:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //[MBProgressHUD hideHUDForView:self animated:YES];
+        for (UIView *subview in self.subviews) {
+            if ([subview isKindOfClass:MBProgressHUD.class]) {
+                MBProgressHUD *hud = (MBProgressHUD *)subview;
+                if (!hud.isHudDelayHide) {
+                    [hud hideAnimated:YES];
+                }
             }
         }
-    }
+    });
+    
 }
 
 
